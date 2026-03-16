@@ -16,3 +16,11 @@ GET  /mcp
 ```
 
 The endpoint is stateless and uses the [Streamable HTTP](https://modelcontextprotocol.io/specification/2025-03-26/basic/transports#streamable-http) MCP transport.
+
+## Authentication
+
+Requests must include a valid API token as a bearer token:
+
+```
+Authorization: Bearer <your-api-token>
+```

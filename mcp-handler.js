@@ -9,9 +9,8 @@ const {
 const { loadToolsFromAgents } = require("./tools/from-agents");
 
 /**
- * Creates a stateless MCP server. 
- * Registers handlers for listing and calling tools.
- * @param {object} req
+ * Creates a stateless MCP server with handlers for listing and calling tools
+ * @param {object} req express request
  * @returns {Server}
  */
 const createServer = (req) => {
@@ -20,15 +19,21 @@ const createServer = (req) => {
     { capabilities: { tools: {} } }
   );
 
-  // list request handler
-  server.setRequestHandler(ListToolsRequestSchema, async () => {
+  server.setRequestHandler(ListToolsRequestSchema, listToolsHandler(req));
+  server.setRequestHandler(CallToolRequestSchema, callToolHandler(req));
+  return server;
+};
+
+const listToolsHandler = (req) => {
+  return async (mcpRequest) => {
     const tools = await loadToolsFromAgents(req);
     return { tools: tools.map((t) => t.toolDef) };
-  });
+  };
+};
 
-  // call request handler
-  server.setRequestHandler(CallToolRequestSchema, async (request) => {
-    const { name, arguments: args } = request.params;
+const callToolHandler = (req) => {
+  return async (mcpRequest) => {
+    const { name, arguments: args } = mcpRequest.params;
     const tools = await loadToolsFromAgents(req);
     const tool = tools.find((t) => t.toolDef.name === name);
 
@@ -54,9 +59,7 @@ const createServer = (req) => {
         content: [{ type: "text", text: e.message || String(e) }],
       };
     }
-  });
-
-  return server;
+  };
 };
 
 /**
