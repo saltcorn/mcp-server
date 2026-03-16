@@ -23,10 +23,16 @@ const requireGetSkillInstances = () => {
  */
 const loadToolsFromAgents = async (req) => {
   const get_skill_instances = requireGetSkillInstances();
-  const agentTriggers = await Trigger.find({ action: "Agent" });
+  const agentTriggers = await Trigger.find({
+    action: "Agent",
+    when_trigger: "API call",
+  });
+  const userRoleId = req?.user?.role_id ?? 100;
   const tools = [];
 
   for (const trigger of agentTriggers) {
+    const minRole = trigger.min_role ?? 100;
+    if (userRoleId > minRole) continue;
     const skills = get_skill_instances(trigger.configuration);
 
     for (const skill of skills) {

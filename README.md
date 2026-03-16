@@ -6,7 +6,7 @@ Requires the [agents](https://github.com/saltcorn/agents) plugin.
 
 ## How it works
 
-Each Agent trigger you configure becomes an MCP tool. Any MCP-compatible client can then discover and call them via the `/mcp` endpoint.
+Agent triggers with `when_trigger` set to **API call** are exposed as MCP tools. This is required because only API call triggers have a **Minimum role** setting, which controls which users can see and invoke the tool.
 
 ## Endpoint
 
